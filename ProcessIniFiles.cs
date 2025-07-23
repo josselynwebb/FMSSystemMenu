@@ -33,6 +33,12 @@ namespace FmsSystemMenu
             return value;
         }
 
+        public static void WriteIniFile(string iniFilePath, string sectionName, string keyName, string value)
+        {
+            IniFileParser iniFileParser = new IniFileParser(iniFilePath);
+            iniFileParser.SetValue(sectionName, keyName, value);
+            iniFileParser.Save(iniFilePath);
+        }
         public static void GetAteInfo()
         {
             string result = "";

@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using FmsSystemMenu.Additonal_Libraries;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace FmsSystemMenu.Windows
 {
@@ -25,7 +26,7 @@ namespace FmsSystemMenu.Windows
     /// </summary>
     public partial class TestPrograms : Window
     {
-        public StringBuilder SystemType = new StringBuilder();
+        public string SystemType = String.Empty;
         public string apsName = string.Empty;
         public string typeOfSystem = String.Empty;
         public string apsIniPath = string.Empty;
@@ -123,17 +124,17 @@ namespace FmsSystemMenu.Windows
                 }
                 else
                 {
-                    string[] directories = Directory.GetDirectories(DirectoryUtility.TpsDirectory);
+                    string[] directories = Directory.GetDirectories(tpsDirectory);
 
                     foreach (string d in directories)
                     {
                         if (SystemType.ToString().Contains("717"))
                         {
-                            if (DirectoryUtility.TpsDirectory.Contains("TPS_Programs"))
+                            if (tpsDirectory.Contains("TPS_Programs"))
                             {
                                 ComboBox.Items.Add(d.Substring(16).Replace("_", " "));
                             }
-                            else if (DirectoryUtility.TpsDirectory.Contains("V4"))
+                            else if (tpsDirectory.Contains("V4"))
                             {
                                 ComboBox.Items.Add(d.Substring(20).Replace("_", " "));
                             }
@@ -164,24 +165,24 @@ namespace FmsSystemMenu.Windows
             if (ProcessIniFiles.TpsDrive == @"F:\")
             {
 
-                IoUtilities.WriteIniFile(CommonUtilities.IniFilePath, "File Locations", "TPS_LOCATION",
+                ProcessIniFiles.WriteIniFile(ProcessIniFiles.PathToAtsIni, "File Locations", "TPS_LOCATION",
                     @"TPS_Programs\");
             }
             else if (ProcessIniFiles.TpsDrive == @"E:\")
             {
                 if (SystemType.ToString().Contains("657"))
                 {
-                    IoUtilities.WriteIniFile(CommonUtilities.IniFilePath, "File Locations", "TPS_LOCATION",
+                    ProcessIniFiles.WriteIniFile(ProcessIniFiles.PathToAtsIni, "File Locations", "TPS_LOCATION",
                         @"APSDATA\TETS\");
                 }
                 else if (SystemType.ToString().Contains("(V)4"))
                 {
-                    IoUtilities.WriteIniFile(CommonUtilities.IniFilePath, "File Locations", "TPS_LOCATION",
+                    ProcessIniFiles.WriteIniFile(ProcessIniFiles.PathToAtsIni, "File Locations", "TPS_LOCATION",
                         @"APSDATA\VIPERTV4\");
                 }
                 else
                 {
-                    IoUtilities.WriteIniFile(CommonUtilities.IniFilePath, "File Locations", "TPS_LOCATION",
+                    ProcessIniFiles.WriteIniFile(ProcessIniFiles.PathToAtsIni, "File Locations", "TPS_LOCATION",
                         @"APSDATA\VIPERT\");
                 }
             }
@@ -190,20 +191,20 @@ namespace FmsSystemMenu.Windows
         /// <summary>Gets the system information and displays it on the form</summary>
         private void GetSystemInformation()
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            string result = string.Empty;
             string sectionName = "System Startup";
             string keyName;
             //TxtSystem.Text = "GPATS";
             keyName = "SWR";
-            stringBuilder = IoUtilities.ReadIniFile(CommonUtilities.IniFilePath, sectionName, keyName);
+            result = ProcessIniFiles.ReadIniFile(ProcessIniFiles.PathToAtsIni, sectionName, keyName);
 
             keyName = string.Empty;
             //TxtSoftwareVersion.Text = stringBuilder.ToString();
-            stringBuilder.Clear();
+            
 
             keyName = "SYSTEM_TYPE";
 
-            SystemType = IoUtilities.ReadIniFile(CommonUtilities.IniFilePath, sectionName, keyName);
+            SystemType = ProcessIniFiles.ReadIniFile(ProcessIniFiles.PathToAtsIni, sectionName, keyName);
 
         }
 
@@ -246,7 +247,7 @@ namespace FmsSystemMenu.Windows
             int numRows = 0;
             string apsIni = string.Empty;
             //string apsName = string.Empty;
-            StringBuilder stringBuilder = new StringBuilder();
+            string result = String.Empty;
             if (SystemType.ToString().Contains("717"))
             {
                 apsIni = "vipert_tps.ini";
@@ -264,29 +265,29 @@ namespace FmsSystemMenu.Windows
             apsName = item;
             if (ProcessIniFiles.TpsDrive == @"F:\")
             {
-                apsIniPath = DirectoryUtility.TpsDirectory + "\\" + apsIni;
+                apsIniPath = tpsDirectory + "\\" + apsIni;
             }
             else
             {
-                apsIniPath = DirectoryUtility.TpsDirectory + apsName.Replace(" ", "_") + "\\" + apsIni;
+                apsIniPath = tpsDirectory + apsName.Replace(" ", "_") + "\\" + apsIni;
             }
 
-            IoUtilities.WriteIniFile(CommonUtilities.IniFilePath, "File Locations", "TPS_INI", apsIniPath);
-            stringBuilder = IoUtilities.ReadIniFile(apsIniPath, "TPS", "CD_PN");
-            TxtBoxPn.Text = stringBuilder.ToString();
-            stringBuilder.Clear();
+            ProcessIniFiles.WriteIniFile(ProcessIniFiles.PathToAtsIni, "File Locations", "TPS_INI", apsIniPath);
+            result = ProcessIniFiles.ReadIniFile(apsIniPath, "TPS", "CD_PN");
+            TxtBoxPn.Text = result.ToString();
+            
 
-            stringBuilder = IoUtilities.ReadIniFile(apsIniPath, "TPS", "CD_VERSION");
-            TxtBoxVersion.Text = stringBuilder.ToString();
+            result = ProcessIniFiles.ReadIniFile(apsIniPath, "TPS", "CD_VERSION");
+            TxtBoxVersion.Text = result.ToString();
             TpsGGrid.Children.Clear();
 
             if (apsName.Contains("M777"))
             {
                 DirectoryUtility.TpsList =
-                    DirectoryUtility.GetDotNetTpsName(DirectoryUtility.TpsDirectory + apsName.Replace(" ", "_") + "\\");
+                    DirectoryUtility.GetDotNetTpsName(tpsDirectory + apsName.Replace(" ", "_") + "\\");
 
                 DirectoryUtility.TpsPaths =
-                    DirectoryUtility.GetDotNetTpsExePath(DirectoryUtility.TpsDirectory + apsName.Replace(" ", "_") +
+                    DirectoryUtility.GetDotNetTpsExePath(tpsDirectory + apsName.Replace(" ", "_") +
                                                          "\\");
             }
             else
@@ -307,7 +308,7 @@ namespace FmsSystemMenu.Windows
                     myControl1.BorderThickness = new Thickness(2, 2, 2, 2);
 
                     string tpsName = DirectoryUtility.TpsList[count];
-                    StringBuilder rt = IoUtilities.ReadIniFile(apsIniPath, "TP" + (count + 1), "RT", "");
+                    string rt = ProcessIniFiles.ReadIniFile(apsIniPath, "TP" + (count + 1), "RT", "");
                     string runTime = rt.ToString();
                     myControl1.Content = tpsName;
 
