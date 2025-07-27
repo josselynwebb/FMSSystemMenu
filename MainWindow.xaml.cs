@@ -25,6 +25,10 @@ namespace FmsSystemMenu
     /// </summary>
     public partial class MainWindow : Window
     {
+        //// Program Unique Debug Constants
+        public const string DEBUG_FILE = "C:\\APS\\DATA\\DEBUGIT_SysMenu";
+        public const string DEBUG_RECORD = "C:\\APS\\DATA\\SysMenu_DEBUG.txt";
+
         public MainWindow()
         {
             InitializeComponent();

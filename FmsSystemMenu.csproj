@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Interop.DAO">
+      <HintPath>.\Interop.DAO.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -59,15 +63,38 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Additonal_Libraries\CommonUtilities.cs" />
-    <Compile Include="Additonal_Libraries\DirectoryUtility.cs" />
-    <Compile Include="Additonal_Libraries\TpsData.cs" />
+    <Compile Include="Additional_Libraries\ApsData.cs" />
+    <Compile Include="Additional_Libraries\Atxml.cs" />
+    <Compile Include="Additional_Libraries\CommonUtilities.cs" />
+    <Compile Include="Additional_Libraries\Debug.cs" />
+    <Compile Include="Additional_Libraries\DirectoryUtility.cs" />
+    <Compile Include="Additional_Libraries\DllImports.cs" />
+    <Compile Include="Additional_Libraries\FaultHistoryDatabaseServices.cs" />
+    <Compile Include="Additional_Libraries\Folders.cs" />
+    <Compile Include="Additional_Libraries\TpsData.cs" />
+    <Compile Include="Additional_Libraries\UniqueDataDiskServices.cs" />
     <Compile Include="VEO2\Veo.cs" />
+    <Compile Include="VEO2\Veo2.cs" />
     <Compile Include="Windows\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Dialog.xaml.cs">
+      <DependentUpon>Dialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\EoCountdown.xaml.cs">
+      <DependentUpon>EoCountdown.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\EoPower.xaml.cs">
+      <DependentUpon>EoPower.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\SetUpInstructions.xaml.cs">
+      <DependentUpon>SetUpInstructions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\TestPrograms.xaml.cs">
       <DependentUpon>TestPrograms.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\UddWizard.xaml.cs">
+      <DependentUpon>UddWizard.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\MenuItem.xaml">
       <SubType>Designer</SubType>
@@ -91,7 +118,7 @@
     <Compile Include="Controls\UserPopup.xaml.cs">
       <DependentUpon>UserPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IniFileParser.cs" />
+    <Compile Include="Additional_Libraries\IniFileParser.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -100,13 +127,33 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\Dialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\EoCountdown.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\EoPower.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\SetUpInstructions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\TestPrograms.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\UddWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ProcessIniFiles.cs" />
+    <Compile Include="Additional_Libraries\ProcessIniFiles.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

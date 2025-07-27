@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Windows.Forms;
 
-namespace FmsSystemMenu.Additonal_Libraries
+namespace FmsSystemMenu.Additional_Libraries
 {
     public class DirectoryUtility
     {
@@ -17,6 +18,89 @@ namespace FmsSystemMenu.Additonal_Libraries
         public static string serialNumber = string.Empty;
 
         public static string TpsDirectory = string.Empty;
+
+        /// <summary>Browses the folders.</summary>
+        /// <param name="hwdOwner">The HWD owner.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="browse">The browse.</param>
+        /// <param name="rootFolder">The root folder.</param>
+        /// <returns>the folder</returns>
+        public static string BrowseFolders(int hwdOwner, string message, Folders.BrowseType browse, int rootFolder)
+        {
+            string path = string.Empty;
+            string folder = string.Empty;
+
+            System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                folder = dlg.SelectedPath;
+            }
+            return folder;
+        }
+
+        /// <summary>Detects if  a usb drive has been detected</summary>
+        public static bool DetectUsbDrive()
+        {
+            //MessageBox.Show("In detect usb");
+
+            DialogResult dialogResult = new DialogResult();
+            DriveInfo[] driveInfos = DriveInfo.GetDrives();
+            CommonUtilities.UsbFlag = false;
+            CommonUtilities.HardDriveFlag = false;
+            serialNumber = CommonUtilities.GetSerialNumber();
+
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+
+            dialog.Description = "Click on the UDD Drive below...";
+
+            dialog.ShowNewFolderButton = false;
+
+            string path;
+            SelectDrive:
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                path = dialog.SelectedPath;
+                path = path.Substring(0, 3);
+                switch (path)
+                {
+                    case "C:\\":
+                        MessageBox.Show("You have selected the C drive. You must select a usb drive.");
+                        CommonUtilities.HardDriveFlag = true;
+                        CommonUtilities.UsbFlag = false;
+                        break;
+                    case "D:\\":
+                        MessageBox.Show("You have selected the D drive. You must select a usb drive.");
+                        CommonUtilities.HardDriveFlag = true;
+                        CommonUtilities.UsbFlag = false;
+                        break;
+                    case "E:\\":
+                        MessageBox.Show("You have selected the E drive. You must select a usb drive.");
+                        CommonUtilities.HardDriveFlag = true;
+                        CommonUtilities.UsbFlag = false;
+                        break;
+                    default:
+                        CommonUtilities.UsbDiskDriveLetter = path;
+                        CommonUtilities.Drive = 6;
+                        CommonUtilities.UsbFlag = true;
+                        CommonUtilities.HardDriveFlag = false;
+
+                        CommonUtilities.FhdbSelfExtractingFileName = CommonUtilities.UsbDiskDriveLetter + @"\FHDB_Database.zip";
+                        CommonUtilities.FhdbUsbFileName = CommonUtilities.UsbDiskDriveLetter + @"\FHDB.mdb";
+                        break;
+                }
+
+            }
+
+            if (CommonUtilities.HardDriveFlag == true)
+            {
+                goto SelectDrive;
+            }
+
+            return CommonUtilities.UsbFlag;
+
+
+        }
 
         public static List<string> GetAtlasTpsName(string Path)
         {
@@ -35,6 +119,63 @@ namespace FmsSystemMenu.Additonal_Libraries
 
             return tpsNameList;
         }
+
+        /// <summary>Gets the udd hard drive path.</summary>
+        /// <returns>the path to the UDD hard drive</returns>
+        public static string GetUddHardDrivePath()
+        {
+            int hWnd = 0;
+
+            string uddPath = BrowseFolders(hWnd, "Select Folder", Folders.BrowseType.BrowseForFolders, Folders.CSIDL_DESKTOP);
+
+            if (uddPath == "")
+            {
+                MessageBox.Show("UDD Path not found.", "UDD Path", MessageBoxButtons.OK);
+            }
+
+            return uddPath;
+        }
+
+        /// <summary>Gets the ietm files.</summary>
+        /// <param name="FilePath">The file path.</param>
+        /// <returns>Path to the IETM</returns>
+        public string GetIetmFiles(string FilePath)
+        {
+            string directoriesInPath = "";
+            string dirName;
+
+            if (Directory.Exists(FilePath))
+            {
+                dirName = Path.GetFileName(FilePath);
+                do
+                {
+                    if (dirName.Length > 3)
+                    {
+                        if (FileSystem.GetAttr(FilePath + dirName) != FileAttribute.Directory)
+                        {
+                            if (dirName.ToUpper().Substring(dirName.Length - 3, 4) == ".IDE" ||
+                                dirName.ToUpper().Substring(dirName.Length - 3, 4) == ".SGM" ||
+                                dirName.ToUpper().Substring(dirName.Length - 3, 4) == ".XML")
+                            {
+                                directoriesInPath += dirName + ",";
+                            }
+                        }
+                    }
+                    dirName = Path.GetFileName(FilePath);
+                } while (dirName != "");
+
+                //Strip Comma Dileneator
+                if (directoriesInPath != "")
+                {
+                    if (directoriesInPath.Substring(1, directoriesInPath.Length) == ",")
+                    {
+                        directoriesInPath = directoriesInPath.Substring(1, directoriesInPath.Length - 1);
+                    }
+                }
+            }
+            return directoriesInPath;
+        }
+
         public static List<string> GetAtlasTpsExePath(string Path)
         {
             List<string> tpsPath = new List<string>();
@@ -116,7 +257,7 @@ namespace FmsSystemMenu.Additonal_Libraries
             return tpsList;
         }
 
-
+        
         /// <summary>Gets the atlas TPS executable path.</summary>
         /// <param name="apsName">The APS name</param>
         /// <param name="systemType">The system type</param>
